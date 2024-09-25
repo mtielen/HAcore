@@ -21,6 +21,7 @@ from .const import (
     DEVICE_ID,
     DEVICE_NAME,
     DOMAIN,
+    LOCALE,
     PARAMETERS,
 )
 
@@ -37,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     device_name = entry.data[DEVICE_NAME]
     device_id = entry.data[DEVICE_ID]
     gateway_id = entry.data[DEVICE_GATEWAY]
+    locale = entry.data[LOCALE]
     refetch_parameters = False
     _LOGGER.debug(
         "Setting up wolflink integration for device: %s (ID: %s, gateway: %s)",
@@ -50,6 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         password,
         client=get_async_client(hass=hass, verify_ssl=False),
     )
+    await wolf_client.load_localized_json(locale)
 
     parameters = await fetch_parameters_init(wolf_client, gateway_id, device_id)
 
